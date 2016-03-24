@@ -10,10 +10,12 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements DownloadProgressListner {
     private long enqueue;
     private DownloadManager dm;
 
@@ -23,7 +25,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+    /*    BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
@@ -51,14 +53,17 @@ public class MainActivity extends Activity {
         };
 
         registerReceiver(receiver, new IntentFilter(
-                DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                DownloadManager.ACTION_DOWNLOAD_COMPLETE));*/
     }
 
     public void onClick(View view) {
-        dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+      /*  dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         Request request = new Request(
                 Uri.parse("http://www.vogella.de/img/lars/LarsVogelArticle7.png"));
-        enqueue = dm.enqueue(request);
+        enqueue = dm.enqueue(request);*/
+        String urlForDownload="http://www.vogella.de/img/lars/LarsVogelArticle7.png";
+        Downloader downloader=new Downloader(MainActivity.this,urlForDownload);
+        downloader.startDownloading();
 
     }
 
@@ -66,5 +71,28 @@ public class MainActivity extends Activity {
         Intent i = new Intent();
         i.setAction(DownloadManager.ACTION_VIEW_DOWNLOADS);
         startActivity(i);
+    }
+
+    @Override
+    public void getDownloadProgress(final int progressInpercentage) {
+        
+        Log.v("DownloadProgress:",String.valueOf(progressInpercentage));
+       //
+
+    }
+
+    @Override
+    public void onDownlodCompleted(final String UriString) {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                ImageView view = (ImageView) findViewById(R.id.imageView1);
+                view.setImageURI(Uri.parse(UriString));
+
+            }
+        });
+
     }
 }
