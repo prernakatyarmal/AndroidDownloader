@@ -31,6 +31,14 @@ public class Downloader {
                 .setContentText("Downloading... 0%");
         mNotifyManager.notify(11, mBuilder.build());
 
+
+    }
+
+    public void startDownloading() {
+        dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(
+                Uri.parse(url));
+        enqueue = dm.enqueue(request);
         new Thread(new Runnable() {
 
             @Override
@@ -67,13 +75,6 @@ public class Downloader {
             }
         }).start();
 
-    }
-
-    public void startDownloading() {
-        dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(
-                Uri.parse(url));
-        enqueue = dm.enqueue(request);
     }
 
 
